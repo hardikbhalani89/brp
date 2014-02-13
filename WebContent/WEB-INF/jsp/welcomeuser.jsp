@@ -13,7 +13,7 @@ welcome user:- ${userdetails.email}
 <br><br><br><br>
 
 
-<form:form method="POST" action="/brp/logout" modelAttribute="userdetails" id="form1" >
+<form:form method="POST" action="/brp/logout" commandName="userdetails" id="form1" >
 		<div>
 				<input type="submit" id="logout" value="Logout " />
 		</div>

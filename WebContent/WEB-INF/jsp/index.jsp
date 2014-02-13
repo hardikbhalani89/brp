@@ -12,7 +12,7 @@
 	
 	<br><br><br><br>
 	
-	<form:form method="POST" action="/brp/signup" modelAttribute="userdetails" id="form1" >
+	<form:form method="POST" action="/brp/welcomeuser" modelAttribute="userdetails" id="form1" >
 		<div>
 				<form:label for="email" path="email" >email :</form:label>
 				<form:input type="text" path="email" value="" name="email" id="email" />

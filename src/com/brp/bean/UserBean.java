@@ -1,5 +1,8 @@
 package com.brp.bean;
 
+import org.springframework.context.annotation.Scope;
+
+@Scope(value = "session")
 public class UserBean {
 	private String email;
 	private String password;

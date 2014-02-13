@@ -4,6 +4,8 @@ package com.brp.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,32 +20,95 @@ import com.brp.bean.UserBean;
 @SessionAttributes({"sessionuser"})
 public class EntryPointController {
 	
+	private static final Logger logger = LoggerFactory.getLogger(EntryPointController.class);
 	
 	@RequestMapping(value = {"/","/index"}, method = RequestMethod.GET)
-	public ModelAndView doLogin(ModelMap model) {
+	public ModelAndView doLogin(ModelMap modelMap,HttpServletRequest request,HttpSession hs) {
 		
-		System.out.println("in doLogin");
+		logger.info("in doLogin");
 		
-		model.addAttribute("userdetails",new UserBean());
-		model.addAttribute("user",new UserBean());
+		//HttpSession hs = request.getSession();
+		String redirectTo=null;
+		UserBean sendUserBean = null;
+		if(hs.getAttribute("sessionuser")!=	null && ((UserBean)hs.getAttribute("sessionuser")).getEmail()!=null){
+			
+			redirectTo="welcomeuser";
+			sendUserBean = (UserBean)hs.getAttribute("sessionuser");
+			
+		}else{
+			redirectTo="index";
+			sendUserBean = new UserBean();
+		}
 		
-		return new ModelAndView("index", model);		
+		modelMap.addAttribute("userdetails",sendUserBean);
+		logger.info("---------------------doLogin completed----------------------------------");
+		
+		
+		return new ModelAndView(redirectTo, modelMap);		
 		//return "index";
 	}
 	
-	@RequestMapping(value = "/signup")
-	public ModelAndView signupUser(@ModelAttribute("user") UserBean userBeanObj, ModelMap modelMap,HttpServletRequest request) {
-		
-		System.out.println("in signupUser");
-		
-		HttpSession hs = request.getSession();
+	@RequestMapping(value = "/welcomeuser")
+	public ModelAndView signupUser(@ModelAttribute("userdetails") UserBean userBeanObj, ModelMap modelMap,HttpServletRequest request,HttpSession hs) {
 		
 		
 		
-			System.out.println("user email"+userBeanObj.getEmail());
+		//HttpSession hs = request.getSession();
+		
+		
+		logger.info("in signupUser : object value:" +userBeanObj.getEmail());
+		
+		
+		if(hs.getAttribute("sessionuser")!=null)
+			logger.info("in signupUser : session value:" +((UserBean)hs.getAttribute("sessionuser")).getEmail());
+		
 			
-			//System.out.println("session value in welcome: "+((UserBean)hs.getAttribute("sessionuser")).getEmail());
-			if(hs.getAttribute("sessionuser")!=null && ((UserBean)hs.getAttribute("sessionuser")).getEmail()!=null){
+			String redirectTo=null;
+			UserBean sendUserBean = null;
+		
+			if(hs.getAttribute("sessionuser")!=null && 
+					
+					(((UserBean)hs.getAttribute("sessionuser")).getEmail()!=null || userBeanObj.getEmail()!=null)){
+				
+				logger.info("FROM 1");
+				if(userBeanObj.getEmail()!=null && ((UserBean)hs.getAttribute("sessionuser")).getEmail()==null){
+					redirectTo = "welcomeuser";
+					sendUserBean = userBeanObj;
+					
+				}
+				
+				else{
+					redirectTo = "welcomeuser";
+					sendUserBean = (UserBean)hs.getAttribute("sessionuser");
+					
+				}
+				
+				
+			}else if(hs.getAttribute("sessionuser")==null && userBeanObj.getEmail()!=null){
+				
+				logger.info("FROM 2");
+				if(userBeanObj.getEmail()!=null){
+					redirectTo = "welcomeuser";
+					sendUserBean = userBeanObj;
+				}else{
+					redirectTo = "welcomeuser";
+					sendUserBean = (UserBean)hs.getAttribute("sessionuser");
+				}
+				
+			}	
+			else{
+				logger.info("FROM 3");
+				redirectTo = "index";
+				sendUserBean = new UserBean();
+				
+			}
+			
+			logger.info("------------------------signupUser completed-------------------------------");
+			modelMap.addAttribute("userdetails", sendUserBean);
+			return new ModelAndView(redirectTo,modelMap).addObject("sessionuser",sendUserBean);
+			
+			
+			/*if(hs.getAttribute("sessionuser")!=null && ((UserBean)hs.getAttribute("sessionuser")).getEmail()!=null){
 				
 				
 				modelMap.addAttribute("userdetails",new UserBean());
@@ -56,15 +121,16 @@ public class EntryPointController {
 				
 			}else{
 				
-				userBeanObj.setEmail(userBeanObj.getEmail());
+				//userBeanObj.setEmail(userBeanObj.getEmail());
 				modelMap.addAttribute("userdetails", userBeanObj);
 				return new ModelAndView("welcomeuser",modelMap).addObject("sessionuser",userBeanObj);
 			
 			
-			}
-			
+			}*/
+		//return new ModelAndView("welcomeuser",modelMap).addObject("sessionuser",userBeanObj);
+		
 		/*}else{
-			System.out.println("session null null in welcome");	
+			logger.info("session null null in welcome");	
 			userBeanObj.setEmail(userBeanObj.getEmail());
 			model.addAttribute("userdetails", userBeanObj);
 			return new ModelAndView("welcomeuser",model).addObject("sessionuser",userBeanObj);
@@ -72,7 +138,7 @@ public class EntryPointController {
 		
 		
 //		if(userBeanObj!=null){
-//			System.out.println("after login : "+userBeanObj.getEmail());
+//			logger.info("after login : "+userBeanObj.getEmail());
 //			userBeanObj.setEmail(userBeanObj.getEmail());
 //			model.addAttribute("userdetails", userBeanObj);
 //			return new ModelAndView("welcomeuser",model).addObject("sessionuser",userBeanObj);
@@ -80,24 +146,24 @@ public class EntryPointController {
 //			model.addAttribute("userdetails",new UserBean());
 //			return new ModelAndView("index",model).addObject("sessionuser",new UserBean());
 //		}
+			
 	}
 	
 	@RequestMapping(value = "/logout")
-	public ModelAndView logoutUser(@ModelAttribute("user") UserBean userBeanObj, ModelMap modelMap,HttpServletRequest request) {
+	public ModelAndView logoutUser(@ModelAttribute("userdetails") UserBean userBeanObj, ModelMap modelMap,HttpServletRequest request,HttpSession hs) {
 		
-			System.out.println("in logoutUser");
-			System.out.println("after logout" +userBeanObj.getEmail());
+			logger.info("in logoutUser : object value:" +userBeanObj.getEmail());
 			
 			modelMap.addAttribute("userdetails", new UserBean());
 			
-			modelMap.remove("user");
-			modelMap.addAttribute("user",new UserBean());
+			/*modelMap.remove("user");
+			modelMap.addAttribute("user",new UserBean());*/
 			
 			
-			HttpSession hs = request.getSession();
-			System.out.println("session value in logout : "+((UserBean)hs.getAttribute("sessionuser")).getEmail());
+			//HttpSession hs = request.getSession();
+			logger.info("in logoutUser : session value:" +((UserBean)hs.getAttribute("sessionuser")).getEmail());
 			hs.invalidate();
-			
+			logger.info("------------------------logoutUser completed-------------------------------");
 			return new ModelAndView("index", modelMap).addObject("sessionuser",new UserBean());		
 		
 	}
