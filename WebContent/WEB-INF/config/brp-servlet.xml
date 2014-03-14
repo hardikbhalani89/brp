@@ -17,7 +17,7 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 http://www.springframework.org/schema/cache
 http://www.springframework.org/schema/cache/spring-cache.xsd">
 	
-	<import resource="classpath:resources/persistence-hibernate.xml"/>
+	<import resource="classpath:com/brp/resources/persistence-hibernate.xml"/>
 	
 	<mvc:resources mapping="/resources/**" location="/resources/" />	
 	<mvc:annotation-driven/>
@@ -42,15 +42,15 @@ http://www.springframework.org/schema/cache/spring-cache.xsd">
 	</bean>
 	
 	
-	<cache:annotation-driven/>
+	<!-- <cache:annotation-driven/>
 	<bean name="cacheManager" class="com.google.code.ssm.spring.SSMCacheManager">
 		<property name="caches">
 			<set>
 				<bean class="com.google.code.ssm.spring.SSMCache">
 					<constructor-arg name="cache" index="0" ref="defaultCache" />
-					<!-- 5 minutes -->
+					5 minutes
 					<constructor-arg name="expiration" index="1" value="300" />
-					<!-- @CacheEvict(..., "allEntries" = true) doesn't work -->
+					@CacheEvict(..., "allEntries" = true) doesn't work
 					<constructor-arg name="allowClear" index="2" value="false" />
 				</bean>
 			</set>
@@ -73,5 +73,5 @@ http://www.springframework.org/schema/cache/spring-cache.xsd">
 				<property name="consistentHashing" value="true" />
 			</bean>
 		</property>
-	</bean>
+	</bean> -->
 </beans>

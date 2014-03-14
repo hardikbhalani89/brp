@@ -8,20 +8,18 @@
 <title>Insert title here</title>
 </head>
 <body>
-	welcome index :- ${userdetails.email}
-	
-	<br><br><br><br>
-	
-	<form:form method="POST" action="/brp/welcomeuser" modelAttribute="userdetails" id="form1" >
+	<form:form action="welcomeuser" commandName="userBean" >
 		<div>
 				<form:label for="email" path="email" >email :</form:label>
-				<form:input type="text" path="email" value="" name="email" id="email" />
+				<form:input type="text" path="email" />
 				
 				<form:label for="password" path="password" >password :</form:label>
-				<form:input type="password" path="password" value="" name="password" id="password" />
+				<form:input type="password" path="password" />
 				
 				<input type="submit" id="submit" value="Sign " />
 		</div>
+		<br><br>
+		
 	</form:form>
 </body>
 </html>

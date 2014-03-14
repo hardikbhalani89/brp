@@ -25,7 +25,5 @@
 	</welcome-file-list>
 	<!--case 1b starts <welcome-file-list> <welcome-file>index.html</welcome-file> 
 		</welcome-file-list> -->
-	<session-config>
-		<session-timeout>1</session-timeout>
-	</session-config>
+	
 </web-app>
